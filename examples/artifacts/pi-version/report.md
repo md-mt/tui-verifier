@@ -2,14 +2,14 @@
 
 - Recipe: `pi-version`
 - Exit code: `71`
-- Duration: `3.31s`
+- Duration: `1.56s`
 
 ## Artifacts
 
-- cast: `.tui-verifier/runs/20260723-124848-pi-version/session.cast`
-- screenshot: `.tui-verifier/runs/20260723-124848-pi-version/final.svg`
-- screen_text: `.tui-verifier/runs/20260723-124848-pi-version/final.txt`
-- video: `.tui-verifier/runs/20260723-124848-pi-version/session.gif`
+- cast: `.tui-verifier/runs/20260723-152149-pi-version/session.cast`
+- screenshot: `.tui-verifier/runs/20260723-152149-pi-version/final.svg`
+- screen_text: `.tui-verifier/runs/20260723-152149-pi-version/final.txt`
+- video: `.tui-verifier/runs/20260723-152149-pi-version/session.mp4`
 
 ## Assertions
 

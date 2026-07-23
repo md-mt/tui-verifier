@@ -1,2 +1,2 @@
-{"version": 2, "width": 100, "height": 12, "timestamp": 1784836128, "command": "pi --version", "env": {"SHELL": "/bin/zsh", "TERM": "dumb"}}
-[1.326018, "o", "Pi at Meta (https://www.npmjs.com/package/@earendil-works/pi-coding-agent)\nUsing AI Gateway (Anthropic upstream)\nsandbox-exec: sandbox_apply: Operation not permitted\n"]
+{"version": 2, "width": 100, "height": 12, "timestamp": 1784845309, "command": "pi --version", "env": {"SHELL": "/bin/zsh", "TERM": "dumb"}}
+[1.282901, "o", "Pi at Meta (https://www.npmjs.com/package/@earendil-works/pi-coding-agent)\nUsing AI Gateway (Anthropic upstream)\nsandbox-exec: sandbox_apply: Operation not permitted\n"]

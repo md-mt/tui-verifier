@@ -2,7 +2,7 @@
   "recipe_name": "pi-help",
   "passed": true,
   "exit_code": 71,
-  "duration_seconds": 2.815384458983317,
+  "duration_seconds": 4.857039832975715,
   "steps": [
     {
       "name": "1:wait_for_text",
@@ -29,9 +29,9 @@
     }
   ],
   "artifacts": {
-    "cast": ".tui-verifier/runs/20260723-124930-pi-help/session.cast",
-    "screenshot": ".tui-verifier/runs/20260723-124930-pi-help/final.svg",
-    "screen_text": ".tui-verifier/runs/20260723-124930-pi-help/final.txt",
-    "video": ".tui-verifier/runs/20260723-124930-pi-help/session.gif"
+    "cast": ".tui-verifier/runs/20260723-152144-pi-help/session.cast",
+    "screenshot": ".tui-verifier/runs/20260723-152144-pi-help/final.svg",
+    "screen_text": ".tui-verifier/runs/20260723-152144-pi-help/final.txt",
+    "video": ".tui-verifier/runs/20260723-152144-pi-help/session.mp4"
   }
 }

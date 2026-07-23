@@ -10,9 +10,9 @@ uv run tui-verify run examples/pi_list.recipe.json --video
 
 | Recipe | Cast | Screenshot | Video | Report |
 | --- | --- | --- | --- | --- |
-| `pi-help` | [session.cast](pi-help/session.cast) | [final.svg](pi-help/final.svg) | [session.gif](pi-help/session.gif) | [report.md](pi-help/report.md) |
-| `pi-version` | [session.cast](pi-version/session.cast) | [final.svg](pi-version/final.svg) | [session.gif](pi-version/session.gif) | [report.md](pi-version/report.md) |
-| `pi-list` | [session.cast](pi-list/session.cast) | [final.svg](pi-list/final.svg) | [session.gif](pi-list/session.gif) | [report.md](pi-list/report.md) |
+| `pi-help` | [session.cast](pi-help/session.cast) | [final.svg](pi-help/final.svg) | [session.mp4](pi-help/session.mp4) | [report.md](pi-help/report.md) |
+| `pi-version` | [session.cast](pi-version/session.cast) | [final.svg](pi-version/final.svg) | [session.mp4](pi-version/session.mp4) | [report.md](pi-version/report.md) |
+| `pi-list` | [session.cast](pi-list/session.cast) | [final.svg](pi-list/final.svg) | [session.mp4](pi-list/session.mp4) | [report.md](pi-list/report.md) |
 
 On this machine Pi exits with `71` after printing its launcher banner because
 the Meta launcher cannot apply its sandbox in the current execution

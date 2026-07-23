@@ -24,6 +24,7 @@ class VerificationRunner:
         recipe: Recipe,
         out_dir: Path = Path(".tui-verifier/runs"),
         render_video: bool = False,
+        video_fps: int = 60,
     ) -> RunResult:
         start = time.monotonic()
         run_dir = new_run_dir(out_dir, recipe.name)
@@ -32,7 +33,7 @@ class VerificationRunner:
             steps, raw_output, exit_code, screen = self._run_pty(recipe, run_dir)
         else:
             steps, raw_output, exit_code, screen = self._run_process(recipe, run_dir)
-        artifacts = render_artifacts(run_dir, render_video)
+        artifacts = render_artifacts(run_dir, render_video, video_fps)
         assertions = self._evaluate_assertions(recipe, screen, raw_output, exit_code)
         passed = all(step.passed for step in steps) and all(a.passed for a in assertions)
         result = RunResult(

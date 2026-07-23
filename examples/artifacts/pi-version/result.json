@@ -2,7 +2,7 @@
   "recipe_name": "pi-version",
   "passed": true,
   "exit_code": 71,
-  "duration_seconds": 3.3129088330315426,
+  "duration_seconds": 1.5639091670163907,
   "steps": [
     {
       "name": "1:wait_for_text",
@@ -24,9 +24,9 @@
     }
   ],
   "artifacts": {
-    "cast": ".tui-verifier/runs/20260723-124848-pi-version/session.cast",
-    "screenshot": ".tui-verifier/runs/20260723-124848-pi-version/final.svg",
-    "screen_text": ".tui-verifier/runs/20260723-124848-pi-version/final.txt",
-    "video": ".tui-verifier/runs/20260723-124848-pi-version/session.gif"
+    "cast": ".tui-verifier/runs/20260723-152149-pi-version/session.cast",
+    "screenshot": ".tui-verifier/runs/20260723-152149-pi-version/final.svg",
+    "screen_text": ".tui-verifier/runs/20260723-152149-pi-version/final.txt",
+    "video": ".tui-verifier/runs/20260723-152149-pi-version/session.mp4"
   }
 }

@@ -2,7 +2,7 @@
   "recipe_name": "pi-list",
   "passed": true,
   "exit_code": 71,
-  "duration_seconds": 1.2833605000050738,
+  "duration_seconds": 4.316063124977518,
   "steps": [
     {
       "name": "1:wait_for_text",
@@ -24,9 +24,9 @@
     }
   ],
   "artifacts": {
-    "cast": ".tui-verifier/runs/20260723-124855-pi-list/session.cast",
-    "screenshot": ".tui-verifier/runs/20260723-124855-pi-list/final.svg",
-    "screen_text": ".tui-verifier/runs/20260723-124855-pi-list/final.txt",
-    "video": ".tui-verifier/runs/20260723-124855-pi-list/session.gif"
+    "cast": ".tui-verifier/runs/20260723-152144-pi-list/session.cast",
+    "screenshot": ".tui-verifier/runs/20260723-152144-pi-list/final.svg",
+    "screen_text": ".tui-verifier/runs/20260723-152144-pi-list/final.txt",
+    "video": ".tui-verifier/runs/20260723-152144-pi-list/session.mp4"
   }
 }

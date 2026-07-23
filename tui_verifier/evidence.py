@@ -16,7 +16,11 @@ def new_run_dir(base_dir: Path, recipe_name: str) -> Path:
     return base_dir / f"{timestamp}-{safe_name}"
 
 
-def render_artifacts(run_dir: Path, render_video: bool) -> dict[str, str]:
+def render_artifacts(
+    run_dir: Path,
+    render_video: bool,
+    video_fps: int = 60,
+) -> dict[str, str]:
     cast_path = run_dir / "session.cast"
     final_text, cols, rows = replay_cast(cast_path)
     final_txt = run_dir / "final.txt"
@@ -29,10 +33,56 @@ def render_artifacts(run_dir: Path, render_video: bool) -> dict[str, str]:
         "screen_text": str(final_txt),
     }
     if render_video and shutil.which("agg"):
-        gif_path = run_dir / "session.gif"
-        subprocess.run(["agg", "--quiet", str(cast_path), str(gif_path)], check=True)
-        artifacts["video"] = str(gif_path)
+        mp4_path = run_dir / "session.mp4"
+        render_mp4(cast_path, mp4_path, video_fps)
+        artifacts["video"] = str(mp4_path)
     return artifacts
+
+
+def render_mp4(cast_path: Path, mp4_path: Path, fps: int = 60) -> None:
+    gif_path = mp4_path.with_suffix(".agg.gif")
+    try:
+        subprocess.run(
+            [
+                "agg",
+                "--quiet",
+                "--fps-cap",
+                str(fps),
+                str(cast_path),
+                str(gif_path),
+            ],
+            check=True,
+        )
+        ffmpeg = find_ffmpeg()
+        subprocess.run(
+            [
+                ffmpeg,
+                "-y",
+                "-loglevel",
+                "error",
+                "-i",
+                str(gif_path),
+                "-vf",
+                f"fps={fps},scale=trunc(iw/2)*2:trunc(ih/2)*2",
+                "-pix_fmt",
+                "yuv420p",
+                "-movflags",
+                "+faststart",
+                str(mp4_path),
+            ],
+            check=True,
+        )
+    finally:
+        gif_path.unlink(missing_ok=True)
+
+
+def find_ffmpeg() -> str:
+    ffmpeg = shutil.which("ffmpeg")
+    if ffmpeg:
+        return ffmpeg
+    import imageio_ffmpeg
+
+    return imageio_ffmpeg.get_ffmpeg_exe()
 
 
 def write_result_files(run_dir: Path, result: RunResult) -> None:

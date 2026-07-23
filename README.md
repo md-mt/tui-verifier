@@ -3,7 +3,8 @@
 TUI Verifier is an evidence-first verification harness for terminal and TUI
 applications. It launches a target command in a PTY, drives it with recipe
 steps, records an asciinema v2 cast, derives a terminal screenshot from the
-cast, optionally renders a GIF video with `agg`, and writes a compact report.
+cast, optionally renders a 60-fps MP4 video with `agg` plus `ffmpeg`, and
+writes a compact report.
 
 The initial showcase recipes target the Pi coding agent because Pi is a real
 terminal coding assistant with a stable local CLI surface.
@@ -21,7 +22,7 @@ Each run writes artifacts under `.tui-verifier/runs/<run-id>/`:
 - `session.cast` - asciinema v2 terminal recording
 - `final.svg` - final terminal screenshot derived by replaying the cast
 - `final.txt` - final terminal screen text
-- `session.gif` - rendered video when `agg` is installed
+- `session.mp4` - 60-fps H.264 video rendered with `agg` plus `ffmpeg`
 - `result.json` - machine-readable verdict and artifact paths
 - `report.md` - review-friendly summary
 

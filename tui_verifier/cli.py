@@ -14,6 +14,7 @@ def main(argv: list[str] | None = None) -> int:
     run_parser.add_argument("--out", type=Path, default=Path(".tui-verifier/runs"))
     run_parser.add_argument("--video", action="store_true")
     run_parser.add_argument("--no-video", action="store_true")
+    run_parser.add_argument("--video-fps", type=int, default=60)
     args = parser.parse_args(argv)
 
     if args.command == "run":
@@ -22,6 +23,7 @@ def main(argv: list[str] | None = None) -> int:
             recipe,
             out_dir=args.out,
             render_video=args.video and not args.no_video,
+            video_fps=args.video_fps,
         )
         verdict = "PASS" if result.passed else "FAIL"
         print(f"{verdict} {result.recipe_name}")
