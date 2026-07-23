@@ -1,0 +1,32 @@
+{
+  "recipe_name": "pi-version",
+  "passed": true,
+  "exit_code": 71,
+  "duration_seconds": 3.3129088330315426,
+  "steps": [
+    {
+      "name": "1:wait_for_text",
+      "passed": true,
+      "detail": "found 'Pi at Meta'",
+      "screen": "Pi at Meta (https://www.npmjs.com/package/@earendil-works/pi-coding-agent)\n                                                                          Using AI Gateway (Anthropi\nc upstream)\n           sandbox-exec: sandbox_apply: Operation not permitted"
+    }
+  ],
+  "assertions": [
+    {
+      "name": "output_contains",
+      "passed": true,
+      "detail": "contains 'Pi at Meta'"
+    },
+    {
+      "name": "output_contains",
+      "passed": true,
+      "detail": "contains 'Using AI Gateway'"
+    }
+  ],
+  "artifacts": {
+    "cast": ".tui-verifier/runs/20260723-124848-pi-version/session.cast",
+    "screenshot": ".tui-verifier/runs/20260723-124848-pi-version/final.svg",
+    "screen_text": ".tui-verifier/runs/20260723-124848-pi-version/final.txt",
+    "video": ".tui-verifier/runs/20260723-124848-pi-version/session.gif"
+  }
+}

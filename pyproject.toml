@@ -1,0 +1,19 @@
+[project]
+name = "tui-verifier"
+version = "0.1.0"
+description = "Evidence-first verification for TUI and terminal applications"
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Mengwei Ding" }]
+dependencies = [
+  "pexpect>=4.9.0",
+  "pyte>=0.8.2",
+]
+
+[project.scripts]
+tui-verify = "tui_verifier.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

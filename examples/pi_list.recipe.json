@@ -1,0 +1,29 @@
+{
+  "name": "pi-list",
+  "description": "Capture Pi extension listing as a stable CLI workflow.",
+  "command": {
+    "argv": ["pi", "list"],
+    "pty": false
+  },
+  "timeout_seconds": 10,
+  "cols": 100,
+  "rows": 12,
+  "steps": [
+    {
+      "action": "wait_for_text",
+      "text": "Pi at Meta",
+      "timeout_seconds": 5
+    }
+  ],
+  "assertions": [
+    {
+      "type": "output_contains",
+      "value": "Pi at Meta"
+    },
+    {
+      "type": "output_contains",
+      "value": "Using AI Gateway"
+    }
+  ],
+  "expect_exit_code": null
+}

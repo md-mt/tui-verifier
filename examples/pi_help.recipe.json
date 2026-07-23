@@ -1,0 +1,33 @@
+{
+  "name": "pi-help",
+  "description": "Capture and verify Pi's terminal help surface.",
+  "command": {
+    "argv": ["pi", "--help"],
+    "pty": false
+  },
+  "timeout_seconds": 20,
+  "cols": 110,
+  "rows": 42,
+  "steps": [
+    {
+      "action": "wait_for_text",
+      "text": "Meta Launcher Options",
+      "timeout_seconds": 10
+    }
+  ],
+  "assertions": [
+    {
+      "type": "output_contains",
+      "value": "Pi at Meta"
+    },
+    {
+      "type": "output_contains",
+      "value": "Meta Launcher Options"
+    },
+    {
+      "type": "output_contains",
+      "value": "--doctor"
+    }
+  ],
+  "expect_exit_code": null
+}
