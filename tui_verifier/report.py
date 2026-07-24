@@ -56,7 +56,7 @@ def _build_info_lines(build_info: BuildInfo) -> list[str]:
 
 def _evidence_links(result: RunResult) -> str:
     links: list[str] = []
-    for key in ("screenshot", "video", "cast", "screen_text"):
+    for key in ("screenshot", "video", "cast", "screen_text", "step_screenshots"):
         value = result.artifacts.get(key)
         if value:
             links.append(f"[{key}]({value})")

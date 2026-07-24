@@ -16,6 +16,7 @@ uv run tui-verify run examples/pi_help.recipe.json --video
 uv run tui-verify run examples/pi_version.recipe.json --video
 uv run tui-verify run examples/pi_list.recipe.json --video
 uv run tui-verify run examples --priority P0 --renderer all --video
+uv run tui-verify run examples/pi_codex_operator.recipe.json --video
 uv run tui-verify list examples --priority P0
 ```
 
@@ -24,12 +25,21 @@ Each run writes artifacts under `.tui-verifier/runs/<run-id>/`:
 - `session.cast` - asciinema v2 terminal recording
 - `final.svg` - final terminal screenshot derived by replaying the cast
 - `final.txt` - final terminal screen text
+- `steps/` - per-step terminal screenshots and text snapshots
 - `session.mp4` - 60-fps H.264 video rendered with `agg` plus `ffmpeg`
 - `result.json` - machine-readable verdict and artifact paths
 - `report.md` - review-friendly summary
 - `latest-report.md` - aggregate report when multiple recipes/renderers run
 
 Tracked Pi sample artifacts are included under `examples/artifacts/`.
+
+`examples/pi_codex_operator.recipe.json` demonstrates agent-driven execution
+with `codex exec` as the operator. The operator returns JSON assertions and a
+transcript; the verifier still owns evidence generation from the transcript:
+asciinema cast, screenshots, MP4 video, result JSON, and reports. In local Meta
+launcher environments where `codex exec` exits before running because
+`sandbox-exec` cannot apply its profile, the failed operator launch is captured
+as normal verification evidence.
 
 ## Stack Design
 
@@ -39,7 +49,9 @@ The harness follows the same architecture as the MetaCode TUI validation stack:
 - recipe discovery and selection from `*.recipe.json` files
 - renderer expansion with `--renderer default|all|<name>`
 - per-run build provenance in aggregate reports
-- evidence-first artifacts: cast, screenshot, MP4 video, result JSON, report
+- evidence-first artifacts: cast, screenshot, per-step screenshots, MP4 video,
+  result JSON, report
+- agent-driven execution with a Codex CLI operator adapter
 - before/after delta primitives for guardrail-style comparisons
 
 ## Recipe Format
@@ -96,6 +108,11 @@ TUI with two frontends, a recipe can declare `{"opentui": [], "ink": ["-x",
 The Pi examples do not assert a fixed exit code because Meta launcher sandbox
 policy differs by machine. The actual exit code is still recorded in
 `result.json` and `report.md`.
+
+For agent-driven recipes, set `"execution": "agent-driven"` and add an
+`operator` block such as `{"command": ["codex", "exec"], "prompt_mode":
+"stdin"}`. The prompt includes the recipe checks, target command, terminal
+dimensions, and expected JSON response schema.
 
 ## Why Asciinema First
 

@@ -1,0 +1,37 @@
+{
+  "name": "pi-codex-operator",
+  "description": "Use Codex as the verification operator for Pi's terminal help workflow.",
+  "intent": "Show that an agent can exercise a terminal workflow, judge the checks, and let the harness publish cast, screenshots, video, and reports.",
+  "priority": "P1",
+  "execution": "agent-driven",
+  "determinism": "agentic",
+  "checks": [
+    "Pi launcher banner renders",
+    "Meta launcher help options render",
+    "terminal evidence is recorded"
+  ],
+  "operator": {
+    "type": "codex",
+    "command": ["codex", "exec"],
+    "timeout_seconds": 180,
+    "prompt_mode": "stdin"
+  },
+  "renderers": {
+    "default": []
+  },
+  "command": {
+    "argv": ["pi", "--help"],
+    "pty": false
+  },
+  "timeout_seconds": 20,
+  "cols": 110,
+  "rows": 42,
+  "steps": [
+    {
+      "action": "wait_for_text",
+      "text": "Meta Launcher Options",
+      "timeout_seconds": 10
+    }
+  ],
+  "expect_exit_code": null
+}

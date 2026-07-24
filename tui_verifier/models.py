@@ -17,11 +17,13 @@ class Recipe:
     name: str
     command: CommandSpec
     description: str = ""
+    intent: str = ""
     priority: str = "P2"
     execution: str = "scripted"
     determinism: str = "deterministic"
     ci_paths: list[str] = field(default_factory=list)
     checks: list[str] = field(default_factory=list)
+    operator: dict[str, Any] = field(default_factory=dict)
     renderers: dict[str, list[str]] = field(default_factory=lambda: {"default": []})
     steps: list[dict[str, Any]] = field(default_factory=list)
     assertions: list[dict[str, Any]] = field(default_factory=list)
@@ -87,12 +89,14 @@ def recipe_from_mapping(data: dict[str, Any]) -> Recipe:
     return Recipe(
         name=data["name"],
         description=data.get("description", ""),
+        intent=data.get("intent", ""),
         command=command,
         priority=data.get("priority", "P2"),
         execution=data.get("execution", "scripted"),
         determinism=data.get("determinism", "deterministic"),
         ci_paths=list(data.get("ci_paths", [])),
         checks=list(data.get("checks", [])),
+        operator=dict(data.get("operator", {})),
         renderers=_normalize_renderers(data.get("renderers")),
         steps=list(data.get("steps", [])),
         assertions=list(data.get("assertions", [])),

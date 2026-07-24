@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import argparse
+import shlex
 from pathlib import Path
 
+from .agent_driven import CodexCliAgentRunner
 from .build_info import BuildInfo
 from .registry import load_recipes, select_recipes
 from .renderer import selected_renderers
@@ -22,6 +24,7 @@ def main(argv: list[str] | None = None) -> int:
     run_parser.add_argument("--priority")
     run_parser.add_argument("--recipe-name", action="append", dest="recipe_names")
     run_parser.add_argument("--renderer", default="default")
+    run_parser.add_argument("--operator-command")
     list_parser = subparsers.add_parser("list", help="list recipes")
     list_parser.add_argument("recipes", nargs="+", type=Path)
     list_parser.add_argument("--priority")
@@ -34,7 +37,10 @@ def main(argv: list[str] | None = None) -> int:
             names=args.recipe_names,
         )
         results = []
-        runner = VerificationRunner()
+        agent_runner = None
+        if args.operator_command:
+            agent_runner = CodexCliAgentRunner(command=shlex.split(args.operator_command))
+        runner = VerificationRunner(agent_runner)
         for recipe in recipes:
             for renderer_name, renderer_argv in selected_renderers(recipe, args.renderer):
                 results.append(

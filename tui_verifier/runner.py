@@ -8,6 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
+from .agent_driven import AgentDrivenRunner, AgentRunner, CodexCliAgentRunner
 from .cast import CastRecorder
 from .evidence import new_run_dir, render_artifacts, write_result_files
 from .models import (
@@ -27,6 +28,9 @@ def load_recipe(path: Path) -> Recipe:
 
 
 class VerificationRunner:
+    def __init__(self, agent_runner: AgentRunner | None = None) -> None:
+        self.agent_runner = agent_runner
+
     def run(
         self,
         recipe: Recipe,
@@ -40,12 +44,26 @@ class VerificationRunner:
         runnable_recipe = _with_renderer_argv(recipe, renderer_argv or [])
         run_dir = new_run_dir(out_dir, recipe.name, renderer)
         run_dir.mkdir(parents=True, exist_ok=True)
-        if runnable_recipe.command.pty:
+        if runnable_recipe.execution == "agent-driven":
+            steps, assertions, raw_output, exit_code, screen = self._run_agent_driven(
+                runnable_recipe, run_dir
+            )
+        elif runnable_recipe.execution != "scripted":
+            raise ValueError(f"unknown execution mode: {runnable_recipe.execution}")
+        elif runnable_recipe.command.pty:
             steps, raw_output, exit_code, screen = self._run_pty(runnable_recipe, run_dir)
+            assertions = self._evaluate_assertions(recipe, screen, raw_output, exit_code)
         else:
             steps, raw_output, exit_code, screen = self._run_process(runnable_recipe, run_dir)
-        artifacts = render_artifacts(run_dir, render_video, video_fps)
-        assertions = self._evaluate_assertions(recipe, screen, raw_output, exit_code)
+            assertions = self._evaluate_assertions(recipe, screen, raw_output, exit_code)
+        artifacts = render_artifacts(
+            run_dir,
+            render_video,
+            video_fps,
+            steps=steps,
+            cols=recipe.cols,
+            rows=recipe.rows,
+        )
         score = score_from_assertions(assertions)
         passed = all(step.passed for step in steps) and all(a.passed for a in assertions)
         result = RunResult(
@@ -63,6 +81,14 @@ class VerificationRunner:
         )
         write_result_files(run_dir, result)
         return result
+
+    def _run_agent_driven(
+        self,
+        recipe: Recipe,
+        run_dir: Path,
+    ) -> tuple[list[StepResult], list[AssertionResult], str, int | None, str]:
+        agent_runner = self.agent_runner or CodexCliAgentRunner.from_recipe(recipe)
+        return AgentDrivenRunner(agent_runner).run(recipe, run_dir)
 
     def _run_pty(
         self,

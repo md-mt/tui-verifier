@@ -6,7 +6,7 @@ import subprocess
 from datetime import datetime
 from pathlib import Path
 
-from .models import RunResult
+from .models import RunResult, StepResult
 from .screen import render_svg, replay_cast
 
 
@@ -21,6 +21,9 @@ def render_artifacts(
     run_dir: Path,
     render_video: bool,
     video_fps: int = 60,
+    steps: list[StepResult] | None = None,
+    cols: int | None = None,
+    rows: int | None = None,
 ) -> dict[str, str]:
     cast_path = run_dir / "session.cast"
     final_text, cols, rows = replay_cast(cast_path)
@@ -33,11 +36,36 @@ def render_artifacts(
         "screenshot": str(final_svg),
         "screen_text": str(final_txt),
     }
+    step_dir = _render_step_screens(run_dir, steps or [], cols, rows)
+    if step_dir is not None:
+        artifacts["step_screenshots"] = str(step_dir)
+    for name in ("agent_prompt.md", "agent_transcript.md", "agent_outcome.json"):
+        path = run_dir / name
+        if path.exists():
+            artifacts[name.removesuffix(".md").removesuffix(".json")] = str(path)
     if render_video and shutil.which("agg"):
         mp4_path = run_dir / "session.mp4"
         render_mp4(cast_path, mp4_path, video_fps)
         artifacts["video"] = str(mp4_path)
     return artifacts
+
+
+def _render_step_screens(
+    run_dir: Path,
+    steps: list[StepResult],
+    cols: int,
+    rows: int,
+) -> Path | None:
+    if not steps:
+        return None
+    step_dir = run_dir / "steps"
+    step_dir.mkdir(parents=True, exist_ok=True)
+    for index, step in enumerate(steps, start=1):
+        safe_name = "".join(ch if ch.isalnum() or ch in "-_" else "-" for ch in step.name)
+        path_base = step_dir / f"{index:02d}-{safe_name}"
+        (path_base.with_suffix(".txt")).write_text(step.screen + "\n", encoding="utf-8")
+        render_svg(step.screen, path_base.with_suffix(".svg"), cols, rows)
+    return step_dir
 
 
 def render_mp4(cast_path: Path, mp4_path: Path, fps: int = 60) -> None:
