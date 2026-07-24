@@ -17,6 +17,12 @@ class Recipe:
     name: str
     command: CommandSpec
     description: str = ""
+    priority: str = "P2"
+    execution: str = "scripted"
+    determinism: str = "deterministic"
+    ci_paths: list[str] = field(default_factory=list)
+    checks: list[str] = field(default_factory=list)
+    renderers: dict[str, list[str]] = field(default_factory=lambda: {"default": []})
     steps: list[dict[str, Any]] = field(default_factory=list)
     assertions: list[dict[str, Any]] = field(default_factory=list)
     expect_exit_code: int | None = 0
@@ -46,6 +52,10 @@ class RunResult:
     passed: bool
     exit_code: int | None
     duration_seconds: float
+    priority: str
+    execution: str
+    renderer: str
+    score: float
     steps: list[StepResult]
     assertions: list[AssertionResult]
     artifacts: dict[str, str]
@@ -56,6 +66,10 @@ class RunResult:
             "passed": self.passed,
             "exit_code": self.exit_code,
             "duration_seconds": self.duration_seconds,
+            "priority": self.priority,
+            "execution": self.execution,
+            "renderer": self.renderer,
+            "score": self.score,
             "steps": [step.__dict__ for step in self.steps],
             "assertions": [assertion.__dict__ for assertion in self.assertions],
             "artifacts": self.artifacts,
@@ -74,6 +88,12 @@ def recipe_from_mapping(data: dict[str, Any]) -> Recipe:
         name=data["name"],
         description=data.get("description", ""),
         command=command,
+        priority=data.get("priority", "P2"),
+        execution=data.get("execution", "scripted"),
+        determinism=data.get("determinism", "deterministic"),
+        ci_paths=list(data.get("ci_paths", [])),
+        checks=list(data.get("checks", [])),
+        renderers=_normalize_renderers(data.get("renderers")),
         steps=list(data.get("steps", [])),
         assertions=list(data.get("assertions", [])),
         expect_exit_code=data.get("expect_exit_code", 0),
@@ -81,3 +101,18 @@ def recipe_from_mapping(data: dict[str, Any]) -> Recipe:
         cols=int(data.get("cols", 100)),
         rows=int(data.get("rows", 30)),
     )
+
+
+def score_from_assertions(assertions: list[AssertionResult]) -> float:
+    if not assertions:
+        return 1.0
+    passed = sum(1 for assertion in assertions if assertion.passed)
+    return 1.0 if passed == len(assertions) else passed / len(assertions)
+
+
+def _normalize_renderers(value: Any) -> dict[str, list[str]]:
+    if value is None:
+        return {"default": []}
+    if isinstance(value, dict):
+        return {str(name): list(argv) for name, argv in value.items()}
+    raise ValueError("renderers must be an object mapping renderer names to argv lists")

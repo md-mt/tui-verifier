@@ -3,33 +3,66 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-from .runner import VerificationRunner, load_recipe
+from .build_info import BuildInfo
+from .registry import load_recipes, select_recipes
+from .renderer import selected_renderers
+from .report import ReportGenerator
+from .runner import VerificationRunner
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="tui-verify")
     subparsers = parser.add_subparsers(dest="command", required=True)
     run_parser = subparsers.add_parser("run", help="run a verification recipe")
-    run_parser.add_argument("recipe", type=Path)
+    run_parser.add_argument("recipes", nargs="+", type=Path)
     run_parser.add_argument("--out", type=Path, default=Path(".tui-verifier/runs"))
     run_parser.add_argument("--video", action="store_true")
     run_parser.add_argument("--no-video", action="store_true")
     run_parser.add_argument("--video-fps", type=int, default=60)
+    run_parser.add_argument("--priority")
+    run_parser.add_argument("--recipe-name", action="append", dest="recipe_names")
+    run_parser.add_argument("--renderer", default="default")
+    list_parser = subparsers.add_parser("list", help="list recipes")
+    list_parser.add_argument("recipes", nargs="+", type=Path)
+    list_parser.add_argument("--priority")
     args = parser.parse_args(argv)
 
     if args.command == "run":
-        recipe = load_recipe(args.recipe)
-        result = VerificationRunner().run(
-            recipe,
-            out_dir=args.out,
-            render_video=args.video and not args.no_video,
-            video_fps=args.video_fps,
+        recipes = select_recipes(
+            load_recipes(args.recipes),
+            priority=args.priority,
+            names=args.recipe_names,
         )
-        verdict = "PASS" if result.passed else "FAIL"
-        print(f"{verdict} {result.recipe_name}")
-        print(f"report: {result.artifacts['cast'].removesuffix('session.cast')}report.md")
-        if "video" in result.artifacts:
-            print(f"video: {result.artifacts['video']}")
-        print(f"screenshot: {result.artifacts['screenshot']}")
-        return 0 if result.passed else 1
+        results = []
+        runner = VerificationRunner()
+        for recipe in recipes:
+            for renderer_name, renderer_argv in selected_renderers(recipe, args.renderer):
+                results.append(
+                    runner.run(
+                        recipe,
+                        out_dir=args.out,
+                        render_video=args.video and not args.no_video,
+                        video_fps=args.video_fps,
+                        renderer=renderer_name,
+                        renderer_argv=renderer_argv,
+                    )
+                )
+        build_info = BuildInfo.from_command(recipes[0].command.argv) if recipes else None
+        report = ReportGenerator().generate_markdown(results, build_info=build_info)
+        args.out.mkdir(parents=True, exist_ok=True)
+        report_path = args.out / "latest-report.md"
+        report_path.write_text(report, encoding="utf-8")
+        passed = sum(1 for result in results if result.passed)
+        print(f"{passed}/{len(results)} passed")
+        print(f"report: {report_path}")
+        for result in results:
+            verdict = "PASS" if result.passed else "FAIL"
+            video = result.artifacts.get("video", "-")
+            print(f"{verdict} {result.recipe_name} [{result.renderer}] video: {video}")
+        return 0 if results and all(result.passed for result in results) else 1
+    if args.command == "list":
+        recipes = select_recipes(load_recipes(args.recipes), priority=args.priority)
+        for recipe in recipes:
+            print(f"{recipe.name}\t{recipe.priority}\t{recipe.execution}\t{recipe.description}")
+        return 0
     return 2

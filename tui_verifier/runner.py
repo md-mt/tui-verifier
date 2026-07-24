@@ -4,12 +4,20 @@ import json
 import os
 import subprocess
 import time
+from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
 from .cast import CastRecorder
 from .evidence import new_run_dir, render_artifacts, write_result_files
-from .models import AssertionResult, Recipe, RunResult, StepResult, recipe_from_mapping
+from .models import (
+    AssertionResult,
+    Recipe,
+    RunResult,
+    StepResult,
+    recipe_from_mapping,
+    score_from_assertions,
+)
 from .screen import replay_cast
 from .session import TerminalSession
 
@@ -25,22 +33,30 @@ class VerificationRunner:
         out_dir: Path = Path(".tui-verifier/runs"),
         render_video: bool = False,
         video_fps: int = 60,
+        renderer: str = "default",
+        renderer_argv: list[str] | None = None,
     ) -> RunResult:
         start = time.monotonic()
-        run_dir = new_run_dir(out_dir, recipe.name)
+        runnable_recipe = _with_renderer_argv(recipe, renderer_argv or [])
+        run_dir = new_run_dir(out_dir, recipe.name, renderer)
         run_dir.mkdir(parents=True, exist_ok=True)
-        if recipe.command.pty:
-            steps, raw_output, exit_code, screen = self._run_pty(recipe, run_dir)
+        if runnable_recipe.command.pty:
+            steps, raw_output, exit_code, screen = self._run_pty(runnable_recipe, run_dir)
         else:
-            steps, raw_output, exit_code, screen = self._run_process(recipe, run_dir)
+            steps, raw_output, exit_code, screen = self._run_process(runnable_recipe, run_dir)
         artifacts = render_artifacts(run_dir, render_video, video_fps)
         assertions = self._evaluate_assertions(recipe, screen, raw_output, exit_code)
+        score = score_from_assertions(assertions)
         passed = all(step.passed for step in steps) and all(a.passed for a in assertions)
         result = RunResult(
             recipe_name=recipe.name,
             passed=passed,
             exit_code=exit_code,
             duration_seconds=time.monotonic() - start,
+            priority=recipe.priority,
+            execution=recipe.execution,
+            renderer=renderer,
+            score=score,
             steps=steps,
             assertions=assertions,
             artifacts=artifacts,
@@ -221,6 +237,13 @@ def _recipe_path(recipe: Recipe, path: str) -> Path:
         return candidate
     base = Path(recipe.command.cwd or ".")
     return base / candidate
+
+
+def _with_renderer_argv(recipe: Recipe, renderer_argv: list[str]) -> Recipe:
+    if not renderer_argv:
+        return recipe
+    command = replace(recipe.command, argv=[*recipe.command.argv, *renderer_argv])
+    return replace(recipe, command=command)
 
 
 def _timeout_output(error: subprocess.TimeoutExpired) -> str:

@@ -1,15 +1,19 @@
 # TUI Verification - PASS
 
 - Recipe: `pi-list`
+- Renderer: `default`
+- Priority: `P0`
+- Execution: `scripted`
+- Score: `1.00`
 - Exit code: `71`
-- Duration: `4.32s`
+- Duration: `1.87s`
 
 ## Artifacts
 
-- cast: `.tui-verifier/runs/20260723-152144-pi-list/session.cast`
-- screenshot: `.tui-verifier/runs/20260723-152144-pi-list/final.svg`
-- screen_text: `.tui-verifier/runs/20260723-152144-pi-list/final.txt`
-- video: `.tui-verifier/runs/20260723-152144-pi-list/session.mp4`
+- cast: `examples/artifacts/pi-list/session.cast`
+- screenshot: `examples/artifacts/pi-list/final.svg`
+- screen_text: `examples/artifacts/pi-list/final.txt`
+- video: `examples/artifacts/pi-list/session.mp4`
 
 ## Assertions
 

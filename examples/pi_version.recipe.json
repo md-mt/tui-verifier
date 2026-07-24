@@ -1,6 +1,17 @@
 {
   "name": "pi-version",
   "description": "Capture Pi version output and verify the launcher banner.",
+  "priority": "P0",
+  "execution": "scripted",
+  "determinism": "deterministic",
+  "checks": [
+    "Pi launcher banner renders",
+    "provider routing banner renders",
+    "terminal evidence is recorded"
+  ],
+  "renderers": {
+    "default": []
+  },
   "command": {
     "argv": ["pi", "--version"],
     "pty": false

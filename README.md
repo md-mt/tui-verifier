@@ -15,6 +15,8 @@ terminal coding assistant with a stable local CLI surface.
 uv run tui-verify run examples/pi_help.recipe.json --video
 uv run tui-verify run examples/pi_version.recipe.json --video
 uv run tui-verify run examples/pi_list.recipe.json --video
+uv run tui-verify run examples --priority P0 --renderer all --video
+uv run tui-verify list examples --priority P0
 ```
 
 Each run writes artifacts under `.tui-verifier/runs/<run-id>/`:
@@ -25,8 +27,20 @@ Each run writes artifacts under `.tui-verifier/runs/<run-id>/`:
 - `session.mp4` - 60-fps H.264 video rendered with `agg` plus `ffmpeg`
 - `result.json` - machine-readable verdict and artifact paths
 - `report.md` - review-friendly summary
+- `latest-report.md` - aggregate report when multiple recipes/renderers run
 
 Tracked Pi sample artifacts are included under `examples/artifacts/`.
+
+## Stack Design
+
+The harness follows the same architecture as the MetaCode TUI validation stack:
+
+- recipe metadata: `priority`, `execution`, `determinism`, `checks`, `ci_paths`
+- recipe discovery and selection from `*.recipe.json` files
+- renderer expansion with `--renderer default|all|<name>`
+- per-run build provenance in aggregate reports
+- evidence-first artifacts: cast, screenshot, MP4 video, result JSON, report
+- before/after delta primitives for guardrail-style comparisons
 
 ## Recipe Format
 
@@ -36,6 +50,11 @@ Python code.
 ```json
 {
   "name": "hello-terminal",
+  "priority": "P0",
+  "execution": "scripted",
+  "determinism": "deterministic",
+  "checks": ["terminal prints hello"],
+  "renderers": { "default": [] },
   "command": { "argv": ["python3", "-c", "print('hello tui')"], "pty": true },
   "steps": [
     { "action": "wait_for_text", "text": "hello tui", "timeout_seconds": 5 }
@@ -69,6 +88,10 @@ Supported assertions:
 `command.pty` defaults to `true` for interactive TUI coverage. Set it to
 `false` for terminal commands that should be captured without an interactive
 PTY, while still producing asciinema-derived evidence.
+
+`renderers` maps renderer names to extra argv appended to the command. For a
+TUI with two frontends, a recipe can declare `{"opentui": [], "ink": ["-x",
+"ink"]}` and `--renderer all` will run both.
 
 The Pi examples do not assert a fixed exit code because Meta launcher sandbox
 policy differs by machine. The actual exit code is still recorded in

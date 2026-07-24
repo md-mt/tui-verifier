@@ -1,6 +1,17 @@
 {
   "name": "pi-help",
   "description": "Capture and verify Pi's terminal help surface.",
+  "priority": "P0",
+  "execution": "scripted",
+  "determinism": "deterministic",
+  "checks": [
+    "Pi launcher banner renders",
+    "Meta launcher help options render",
+    "terminal evidence is recorded"
+  ],
+  "renderers": {
+    "default": []
+  },
   "command": {
     "argv": ["pi", "--help"],
     "pty": false

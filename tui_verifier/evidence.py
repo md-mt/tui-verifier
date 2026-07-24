@@ -10,10 +10,11 @@ from .models import RunResult
 from .screen import render_svg, replay_cast
 
 
-def new_run_dir(base_dir: Path, recipe_name: str) -> Path:
+def new_run_dir(base_dir: Path, recipe_name: str, renderer: str = "default") -> Path:
     safe_name = "".join(ch if ch.isalnum() or ch in "-_" else "-" for ch in recipe_name)
-    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    return base_dir / f"{timestamp}-{safe_name}"
+    safe_renderer = "".join(ch if ch.isalnum() or ch in "-_" else "-" for ch in renderer)
+    timestamp = datetime.now().strftime("%Y%m%d-%H%M%S-%f")
+    return base_dir / f"{timestamp}-{safe_name}-{safe_renderer}"
 
 
 def render_artifacts(
@@ -99,6 +100,10 @@ def render_report(result: RunResult) -> str:
         f"# TUI Verification - {verdict}",
         "",
         f"- Recipe: `{result.recipe_name}`",
+        f"- Renderer: `{result.renderer}`",
+        f"- Priority: `{result.priority}`",
+        f"- Execution: `{result.execution}`",
+        f"- Score: `{result.score:.2f}`",
         f"- Exit code: `{result.exit_code}`",
         f"- Duration: `{result.duration_seconds:.2f}s`",
         "",

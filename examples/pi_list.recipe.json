@@ -1,6 +1,17 @@
 {
   "name": "pi-list",
   "description": "Capture Pi extension listing as a stable CLI workflow.",
+  "priority": "P0",
+  "execution": "scripted",
+  "determinism": "deterministic",
+  "checks": [
+    "Pi launcher banner renders",
+    "provider routing banner renders",
+    "terminal evidence is recorded"
+  ],
+  "renderers": {
+    "default": []
+  },
   "command": {
     "argv": ["pi", "list"],
     "pty": false
