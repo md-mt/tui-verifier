@@ -6,14 +6,14 @@
 - Command: `pi --help`
 - Binary: `/usr/local/bin/pi`
 - Version: `Pi at Meta (https://www.npmjs.com/package/@earendil-works/pi-coding-agent) / Using AI Gateway (Anthropic upstream) / sandbox-exec: sandbox_apply: Operation not permitted`
-- Git commit: `a5789af12b90027607e61b62120f72de2938bed9`
+- Git commit: `4d696ee013d37d06084e2e26b09ac09bbb1710bf`
 - Verified: `yes`
 
 | Recipe | Renderer | Priority | Execution | Result | Score | Evidence |
 | --- | --- | --- | --- | --- | --- | --- |
-| `pi-help` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](pi-help/final.svg) / [video](pi-help/session.mp4) / [cast](pi-help/session.cast) / [screen_text](pi-help/final.txt) |
-| `pi-list` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](pi-list/final.svg) / [video](pi-list/session.mp4) / [cast](pi-list/session.cast) / [screen_text](pi-list/final.txt) |
-| `pi-version` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](pi-version/final.svg) / [video](pi-version/session.mp4) / [cast](pi-version/session.cast) / [screen_text](pi-version/final.txt) |
+| `pi-help` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](examples/artifacts/20260724-004051-177323-pi-help-default/final.svg) / [video](examples/artifacts/20260724-004051-177323-pi-help-default/session.mp4) / [cast](examples/artifacts/20260724-004051-177323-pi-help-default/session.cast) / [screen_text](examples/artifacts/20260724-004051-177323-pi-help-default/final.txt) / [step_screenshots](examples/artifacts/20260724-004051-177323-pi-help-default/steps) |
+| `pi-list` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](examples/artifacts/20260724-004054-385805-pi-list-default/final.svg) / [video](examples/artifacts/20260724-004054-385805-pi-list-default/session.mp4) / [cast](examples/artifacts/20260724-004054-385805-pi-list-default/session.cast) / [screen_text](examples/artifacts/20260724-004054-385805-pi-list-default/final.txt) / [step_screenshots](examples/artifacts/20260724-004054-385805-pi-list-default/steps) |
+| `pi-version` | `default` | `P0` | `scripted` | PASS | 1.00 | [screenshot](examples/artifacts/20260724-004056-344321-pi-version-default/final.svg) / [video](examples/artifacts/20260724-004056-344321-pi-version-default/session.mp4) / [cast](examples/artifacts/20260724-004056-344321-pi-version-default/session.cast) / [screen_text](examples/artifacts/20260724-004056-344321-pi-version-default/final.txt) / [step_screenshots](examples/artifacts/20260724-004056-344321-pi-version-default/steps) |
 
 <details><summary>PASS pi-help [default]</summary>
 
